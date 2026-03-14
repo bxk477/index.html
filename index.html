@@ -23,13 +23,6 @@
       margin: 0 auto;
     }
 
-    .title {
-      font-size: 1.2rem;
-      font-weight: 700;
-      margin-bottom: 12px;
-      text-align: center;
-    }
-
     .compare {
       position: relative;
       width: 100%;
@@ -54,7 +47,6 @@
       display: block;
     }
 
-    /* Top pane gets clipped by JS */
     .pane.top {
       z-index: 2;
       clip-path: inset(0 50% 0 0);
@@ -64,7 +56,6 @@
       z-index: 1;
     }
 
-    /* Vertical divider line */
     .divider {
       position: absolute;
       top: 0;
@@ -78,7 +69,6 @@
       pointer-events: none;
     }
 
-    /* Center handle */
     .handle {
       position: absolute;
       top: 50%;
@@ -99,7 +89,6 @@
       font-weight: bold;
     }
 
-    /* Transparent full overlay slider */
     .slider {
       position: absolute;
       inset: 0;
@@ -180,24 +169,26 @@
 </head>
 <body>
   <div class="wrapper">
-    <div class="title">Swipe Comparison of Two Flourish Embeds</div>
-
     <div class="compare" id="compare">
       <div class="pane bottom" id="bottomPane">
         <iframe
           src="https://flo.uri.sh/visualisation/27647858/embed"
-          title="Flourish Visualization 27647858"
-          loading="lazy"
-          allowfullscreen>
+          title="Flourish visualization 27647858"
+          frameborder="0"
+          scrolling="no"
+          allowfullscreen
+          sandbox="allow-same-origin allow-forms allow-scripts allow-downloads allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation">
         </iframe>
       </div>
 
       <div class="pane top" id="topPane">
         <iframe
           src="https://flo.uri.sh/visualisation/27647708/embed"
-          title="Flourish Visualization 27647708"
-          loading="lazy"
-          allowfullscreen>
+          title="Flourish visualization 27647708"
+          frameborder="0"
+          scrolling="no"
+          allowfullscreen
+          sandbox="allow-same-origin allow-forms allow-scripts allow-downloads allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation">
         </iframe>
       </div>
 
@@ -236,7 +227,6 @@
     const interactRight = document.getElementById("interactRight");
 
     function updateSwipe(value) {
-      // Show left/top chart up to the slider position
       topPane.style.clipPath = `inset(0 ${100 - value}% 0 0)`;
       divider.style.left = value + "%";
       handle.style.left = value + "%";
@@ -246,7 +236,6 @@
       updateSwipe(e.target.value);
     });
 
-    // Default: bottom chart is interactive, top chart is visual-only
     function setInteractivePane(which) {
       const topIframe = topPane.querySelector("iframe");
       const bottomIframe = document.getElementById("bottomPane").querySelector("iframe");
@@ -264,11 +253,11 @@
       }
     }
 
-    interactLeft.addEventListener("click", () => setInteractivePane("left"));
-    interactRight.addEventListener("click", () => setInteractivePane("right"));
-
     updateSwipe(50);
     setInteractivePane("right");
+
+    interactLeft.addEventListener("click", () => setInteractivePane("left"));
+    interactRight.addEventListener("click", () => setInteractivePane("right"));
   </script>
 </body>
 </html>
