@@ -3,33 +3,43 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Flourish Swipe Compare</title>
+  <title></title>
 
   <style>
     * {
       box-sizing: border-box;
     }
 
-    body {
+    html, body {
       margin: 0;
-      padding: 20px;
-      font-family: Arial, Helvetica, sans-serif;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
       background: #ffffff;
-      color: #222;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      padding: 0;
     }
 
     .wrapper {
-      max-width: 1500px;
-      margin: 0 auto;
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      max-width: none;
+      margin: 0;
     }
 
     .compare {
-      position: relative;
+      position: absolute;
+      inset: 0;
       width: 100%;
-      height: 900px;
+      height: 100%;
       overflow: hidden;
-      border-radius: 14px;
-      box-shadow: 0 2px 16px rgba(0,0,0,0.12);
+      border-radius: 0;
+      box-shadow: none;
       background: #f8f8f8;
     }
 
@@ -62,8 +72,8 @@
       bottom: 0;
       left: 50%;
       width: 3px;
-      background: white;
-      box-shadow: 0 0 0 1px rgba(0,0,0,0.15);
+      background: #ffffff;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15);
       z-index: 4;
       transform: translateX(-50%);
       pointer-events: none;
@@ -73,12 +83,12 @@
       position: absolute;
       top: 50%;
       left: 50%;
-      width: 42px;
-      height: 42px;
+      width: 46px;
+      height: 46px;
       border-radius: 50%;
-      background: white;
-      border: 1px solid rgba(0,0,0,0.15);
-      box-shadow: 0 2px 10px rgba(0,0,0,0.18);
+      background: rgba(255,255,255,0.96);
+      border: 1px solid rgba(0,0,0,0.14);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.18);
       transform: translate(-50%, -50%);
       z-index: 5;
       pointer-events: none;
@@ -86,7 +96,9 @@
       align-items: center;
       justify-content: center;
       font-size: 18px;
-      font-weight: bold;
+      font-weight: 700;
+      color: #333;
+      user-select: none;
     }
 
     .slider {
@@ -96,73 +108,61 @@
       height: 100%;
       z-index: 6;
       appearance: none;
+      -webkit-appearance: none;
       background: transparent;
       margin: 0;
       cursor: ew-resize;
     }
 
+    .slider:focus {
+      outline: none;
+    }
+
+    .slider::-webkit-slider-runnable-track {
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      border: none;
+    }
+
+    .slider::-moz-range-track {
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      border: none;
+    }
+
     .slider::-webkit-slider-thumb {
       appearance: none;
-      width: 42px;
-      height: 900px;
+      -webkit-appearance: none;
+      width: 46px;
+      height: 100vh;
       background: transparent;
+      border: none;
       cursor: ew-resize;
-      border: 0;
     }
 
     .slider::-moz-range-thumb {
-      width: 42px;
-      height: 900px;
+      width: 46px;
+      height: 100vh;
       background: transparent;
-      cursor: ew-resize;
-      border: 0;
-    }
-
-    .controls {
-      margin-top: 14px;
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .controls button {
-      padding: 10px 14px;
       border: none;
-      border-radius: 10px;
-      background: #1f6feb;
-      color: white;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .controls button.secondary {
-      background: #666;
-    }
-
-    .note {
-      margin-top: 12px;
-      font-size: 0.95rem;
-      color: #555;
-      text-align: center;
-      line-height: 1.45;
+      cursor: ew-resize;
     }
 
     @media (max-width: 900px) {
-      body {
-        padding: 10px;
-      }
-
-      .compare {
-        height: 700px;
+      .handle {
+        width: 42px;
+        height: 42px;
+        font-size: 16px;
       }
 
       .slider::-webkit-slider-thumb {
-        height: 700px;
+        width: 42px;
       }
 
       .slider::-moz-range-thumb {
-        height: 700px;
+        width: 42px;
       }
     }
   </style>
@@ -174,6 +174,7 @@
         <iframe
           src="https://flo.uri.sh/visualisation/27647858/embed"
           title="Flourish visualization 27647858"
+          class="flourish-embed-iframe"
           frameborder="0"
           scrolling="no"
           allowfullscreen
@@ -185,6 +186,7 @@
         <iframe
           src="https://flo.uri.sh/visualisation/27647708/embed"
           title="Flourish visualization 27647708"
+          class="flourish-embed-iframe"
           frameborder="0"
           scrolling="no"
           allowfullscreen
@@ -205,16 +207,6 @@
         aria-label="Swipe comparison slider"
       />
     </div>
-
-    <div class="controls">
-      <button id="interactLeft">Interact with Left/Top Chart</button>
-      <button id="interactRight" class="secondary">Interact with Right/Bottom Chart</button>
-    </div>
-
-    <div class="note">
-      Drag the slider for the swipe effect. <br />
-      If you want to click/hover inside a chart, choose which chart should be interactive.
-    </div>
   </div>
 
   <script>
@@ -222,9 +214,6 @@
     const topPane = document.getElementById("topPane");
     const divider = document.getElementById("divider");
     const handle = document.getElementById("handle");
-
-    const interactLeft = document.getElementById("interactLeft");
-    const interactRight = document.getElementById("interactRight");
 
     function updateSwipe(value) {
       topPane.style.clipPath = `inset(0 ${100 - value}% 0 0)`;
@@ -236,28 +225,7 @@
       updateSwipe(e.target.value);
     });
 
-    function setInteractivePane(which) {
-      const topIframe = topPane.querySelector("iframe");
-      const bottomIframe = document.getElementById("bottomPane").querySelector("iframe");
-
-      if (which === "left") {
-        topIframe.style.pointerEvents = "auto";
-        bottomIframe.style.pointerEvents = "none";
-        interactLeft.style.background = "#1f6feb";
-        interactRight.style.background = "#666";
-      } else {
-        topIframe.style.pointerEvents = "none";
-        bottomIframe.style.pointerEvents = "auto";
-        interactLeft.style.background = "#666";
-        interactRight.style.background = "#1f6feb";
-      }
-    }
-
     updateSwipe(50);
-    setInteractivePane("right");
-
-    interactLeft.addEventListener("click", () => setInteractivePane("left"));
-    interactRight.addEventListener("click", () => setInteractivePane("right"));
   </script>
 </body>
 </html>
